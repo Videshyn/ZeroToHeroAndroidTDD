@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.view.isGone
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -11,14 +12,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val tv = findViewById<TextView>(R.id.titleTextView)
-        val btn = findViewById<Button>(R.id.changeButton)
+        val btn = findViewById<Button>(R.id.hideButton)
 
-        if (savedInstanceState != null) {
-            tv.setText(R.string.i_am_android_developer)
-        }
+        if (savedInstanceState != null) tv.isGone = true
 
-        btn.setOnClickListener {
-            tv.setText(R.string.i_am_android_developer)
-        }
+        btn.setOnClickListener { tv.isGone = true }
     }
 }
