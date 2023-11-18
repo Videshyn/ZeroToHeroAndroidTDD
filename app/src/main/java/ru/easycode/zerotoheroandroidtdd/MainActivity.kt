@@ -7,26 +7,24 @@ import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
-    private var counter = 0
+    private var counter: Count = Count.Base(step = 2)
+    private lateinit var tv: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val tv = findViewById<TextView>(R.id.countTextView)
+        tv = findViewById(R.id.countTextView)
         val btn = findViewById<Button>(R.id.incrementButton)
 
-        savedInstanceState?.let { counter = it.getInt(KEY, 0) }
-        tv.text = counter.toString()
+        savedInstanceState?.let { tv.text = it.getString(KEY, "") }
 
-        btn.setOnClickListener {
-            counter += 2
-            tv.text = counter.toString()
-        }
+        btn.setOnClickListener { tv.text = counter.increment(tv.text.toString()) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(KEY, counter)
+        outState.putString(KEY, tv.text.toString())
     }
 
     companion object {
