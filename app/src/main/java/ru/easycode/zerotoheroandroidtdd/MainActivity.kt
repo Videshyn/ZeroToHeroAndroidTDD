@@ -7,9 +7,11 @@ import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
-    private var counter = 0
-    private lateinit var tv: TextView
+    private var counter: Count = Count.Base(step = 2, max = 4)
+    private var uiState: UiState = UiState.Base(text = "0")
+
     private lateinit var btn: Button
+    private lateinit var tv: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,26 +20,24 @@ class MainActivity : AppCompatActivity() {
         tv = findViewById(R.id.countTextView)
         btn = findViewById(R.id.incrementButton)
 
-        savedInstanceState?.let { counter = it.getInt(KEY, 0) }
-        setupCounter()
-
         btn.setOnClickListener {
-            counter += 2
-            setupCounter()
+            uiState = counter.increment(tv.text.toString())
+            uiState.apply(tv, btn)
         }
-    }
-
-    private fun setupCounter() {
-        tv.text = counter.toString()
-        btn.isEnabled = counter < 4
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(KEY, counter)
+        outState.putSerializable(STATE_KEY, uiState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        uiState = savedInstanceState.getSerializable(STATE_KEY) as UiState
+        uiState.apply(tv, btn)
     }
 
     companion object {
-        private const val KEY = "counter_key"
+        private const val STATE_KEY = "state_key"
     }
 }
