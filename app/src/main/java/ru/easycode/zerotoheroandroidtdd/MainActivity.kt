@@ -7,7 +7,8 @@ import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
-    private var counter = 0
+    private var counter: Count = Count.Base(step = 2, max = 4, min = 0)
+    private lateinit var uiState: UiState
     private lateinit var btnIncrement: Button
     private lateinit var btnDecrement: Button
     private lateinit var tvCounter: TextView
@@ -20,32 +21,27 @@ class MainActivity : AppCompatActivity() {
         btnDecrement = findViewById(R.id.decrementButton)
         tvCounter = findViewById(R.id.countTextView)
 
-        savedInstanceState?.let { counter = it.getInt(KEY, 0) }
-        setupCounter()
+        if (savedInstanceState == null) {
+            // first run
+            uiState = counter.initial(tvCounter.text.toString())
+            uiState.apply(tvCounter, btnIncrement, btnDecrement)
+        }
 
         btnIncrement.setOnClickListener {
-            counter += 2
-            setupCounter()
+            uiState = counter.increment(tvCounter.text.toString())
+            uiState.apply(tvCounter, btnIncrement, btnDecrement)
         }
 
         btnDecrement.setOnClickListener {
-            counter -= 2
-            setupCounter()
+            uiState = counter.decrement(tvCounter.text.toString())
+            uiState.apply(tvCounter, btnIncrement, btnDecrement)
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(KEY, counter)
-    }
-
-    private fun setupCounter() {
-        btnDecrement.isEnabled = counter > 0
-        btnIncrement.isEnabled = counter < 4
-        tvCounter.text = counter.toString()
-    }
-
-    companion object {
-        private const val KEY = "counter_key"
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // restore state after re-creation
+        uiState = counter.initial(tvCounter.text.toString())
+        uiState.apply(tvCounter, btnIncrement, btnDecrement)
     }
 }
