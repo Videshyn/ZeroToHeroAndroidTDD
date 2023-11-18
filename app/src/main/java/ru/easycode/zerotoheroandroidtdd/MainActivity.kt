@@ -11,7 +11,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val tv = findViewById<TextView>(R.id.titleTextView)
-        findViewById<Button>(R.id.changeButton).setOnClickListener {
+        val btn = findViewById<Button>(R.id.changeButton)
+
+        if (savedInstanceState != null) {
+            tv.setText(R.string.i_am_android_developer)
+        }
+
+        btn.setOnClickListener {
             tv.setText(R.string.i_am_android_developer)
         }
     }
